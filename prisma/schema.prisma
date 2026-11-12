@@ -1,0 +1,146 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("ADMIN_KEUANGAN") // SUPER_ADMIN | ADMIN_KEUANGAN | HR
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transactions EmployeeTransaction[]
+  auditLogs    AuditLog[]
+}
+
+model Employee {
+  id              String   @id @default(cuid())
+  employeeId      String   @unique
+  name            String
+  photo           String?
+  position        String
+  department      String
+  phone           String
+  address         String
+  joinDate        DateTime
+  status          String   @default("AKTIF") // AKTIF | NONAKTIF
+  baseSalary      Decimal  @default(0)
+  fixedAllowance  Decimal  @default(0)
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  transactions   EmployeeTransaction[]
+  payrollDetails PayrollDetail[]
+  payslips       Payslip[]
+}
+
+model EmployeeTransaction {
+  id              String   @id @default(cuid())
+  transactionId   String   @unique
+  employeeId      String
+  employee        Employee @relation(fields: [employeeId], references: [id])
+  type            String   // BON | TOP_UP | TARIK_TUNAI | POTONGAN | BONUS | INSENTIF | LEMBUR | KOMISI | TUNJANGAN_TAMBAHAN
+  effect          String   // PENGURANG_GAJI | PENAMBAH_GAJI | OPERASIONAL
+  amount          Decimal
+  date            DateTime
+  description     String
+  paymentMethod   String?
+  status          String   @default("DISETUJUI") // PENDING | DISETUJUI | DITOLAK | LUNAS | CICILAN
+  payrollPeriodId String?
+  payrollPeriod   PayrollPeriod? @relation(fields: [payrollPeriodId], references: [id])
+  category        String?
+  createdById     String
+  createdBy       User     @relation(fields: [createdById], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model PayrollPeriod {
+  id          String   @id @default(cuid())
+  month       Int
+  year        Int
+  status      String   @default("DRAFT") // DRAFT | DIPROSES | MENUNGGU_PEMBAYARAN | DIBAYAR | DIBATALKAN
+  lockedAt    DateTime?
+  processedAt DateTime?
+  paidAt      DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  details      PayrollDetail[]
+  transactions EmployeeTransaction[]
+
+  @@unique([month, year])
+}
+
+model PayrollDetail {
+  id               String   @id @default(cuid())
+  payrollPeriodId  String
+  payrollPeriod    PayrollPeriod @relation(fields: [payrollPeriodId], references: [id])
+  employeeId       String
+  employee         Employee @relation(fields: [employeeId], references: [id])
+  baseSalary       Decimal  @default(0)
+  fixedAllowance   Decimal  @default(0)
+  bonus            Decimal  @default(0)
+  incentive        Decimal  @default(0)
+  overtime         Decimal  @default(0)
+  otherIncome      Decimal  @default(0)
+  grossSalary      Decimal  @default(0)
+  bon              Decimal  @default(0)
+  salaryAdvance    Decimal  @default(0)
+  otherDeductions  Decimal  @default(0)
+  totalDeductions  Decimal  @default(0)
+  netSalary        Decimal  @default(0)
+  status           String   @default("DRAFT")
+  paidAt           DateTime?
+  notes            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  payslip          Payslip?
+
+  @@unique([payrollPeriodId, employeeId])
+}
+
+model Payslip {
+  id               String   @id @default(cuid())
+  payrollDetailId  String   @unique
+  payrollDetail    PayrollDetail @relation(fields: [payrollDetailId], references: [id])
+  employeeId       String
+  employee         Employee @relation(fields: [employeeId], references: [id])
+  period           String
+  issuedAt         DateTime @default(now())
+  isLocked         Boolean  @default(false)
+  createdAt        DateTime @default(now())
+}
+
+model CompanySetting {
+  id             String   @id @default(cuid())
+  key            String   @unique
+  value          String
+  updatedAt      DateTime @updatedAt
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  action     String
+  entity     String
+  entityId   String
+  oldValues  String?
+  newValues  String?
+  createdAt  DateTime @default(now())
+}
+

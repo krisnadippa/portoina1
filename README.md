@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# portoina1
 
-## Getting Started
+# Employee Payroll Management System (PayrollPro)
 
-First, run the development server:
+Sistem manajemen penggajian karyawan (payroll) modern, profesional, dan akurat yang dibangun dengan **Next.js 16**, **React 19**, **TypeScript**, **Tailwind CSS v4**, dan **Prisma ORM**.
 
+Aplikasi ini dirancang untuk mempermudah pengelolaan data karyawan, perhitungan gaji bulanan otomatis, pencatatan transaksi karyawan (kasbon/bon, top up dana, tarik tunai, potongan denda/pinjaman, dan bonus/insentif/lembur), pembuatan & pencetakan slip gaji instan, serta laporan keuangan penggajian.
+
+---
+
+## ✨ Fitur Utama
+
+### 1. Dashboard Eksekutif
+- **Statistik Real-time**: Total Karyawan Aktif, Total Pengeluaran Gaji, Total Bon/Kasbon, Total Potongan, dan Total Gaji Bersih yang harus dibayarkan.
+- **Grafik Interaktif**: Analisis tren penggajian bulanan, komparasi gaji kotor vs gaji bersih, dan proporsi transaksi karyawan menggunakan Recharts.
+- **Aktivitas Terkini & Status Penggajian**: Ringkasan status periode (Draft, Diproses, Disetujui, Dibayarkan) dan aksi cepat (*Quick Actions*).
+
+### 2. Manajemen Data Karyawan (CRUD Lengkap)
+- Nomor ID karyawan otomatis, detail kontak, jabatan, divisi/departemen, tanggal bergabung, status (Aktif/Nonaktif).
+- Konfigurasi gaji pokok bulanan dan tunjangan tetap.
+- Halaman detail komprehensif: riwayat penggajian, saldo bon belum lunas, riwayat transaksi, dan estimasi *take-home pay*.
+
+### 3. Sistem Transaksi & Kasbon Otomatis
+- **Bon / Kasbon**: Pengambilan uang di muka yang otomatis mengurangi gaji bersih periode berjalan.
+- **Top Up Dana**: Pemberian atau pengisian dana operasional maupun uang muka karyawan.
+- **Tarik Tunai**: Penarikan tunai dengan klasifikasi jelas.
+- **Potongan Lainnya**: Denda, pinjaman cicilan, ketidakhadiran, atau potongan khusus lainnya.
+- **Tambahan Pendapatan**: Bonus kinerja, insentif target, uang lembur, dan komisi.
+
+### 4. Sistem Penggajian Otomatis (Payroll Engine)
+- Formula otomatis berbasis transaksi yang disetujui:
+  $$\text{Gaji Kotor} = \text{Gaji Pokok} + \text{Tunjangan Tetap} + \text{Bonus} + \text{Insentif} + \text{Lembur}$$
+  $$\text{Total Potongan} = \text{Bon / Kasbon Terkunci} + \text{Potongan Khusus / Denda / Pinjaman}$$
+  $$\text{Gaji Bersih} = \text{Gaji Kotor} - \text{Total Potongan}$$
+- Fitur Kunci Penggajian (*Lock Payroll*), penandaan status pembayaran (*Mark as Paid*), dan cetak ringkasan rekapitulasi.
+
+### 5. Slip Gaji Otomatis & Cetak PDF
+- Format slip gaji standar perusahaan dengan kop surat, rincian pendapatan, rincian potongan, total gaji bersih terbilang, dan kolom tanda tangan resmi.
+- Pratinjau langsung di aplikasi serta tombol cetak / simpan ke format PDF.
+
+### 6. Laporan Keuangan & Rekapitulasi
+- Filter fleksibel berdasarkan bulan, tahun, divisi, dan kategori transaksi.
+- Tabel rincian pengeluaran keuangan dan ringkasan eksekutif.
+
+### 7. Responsif & Antarmuka Aplikasi Mobile
+- Desain minimalis tanpa gradien berlebihan dengan palet profesional (*Dark Slate* & *Royal Blue*).
+- Sidebar desktop tetap (*fixed*) dengan area konten yang terskrol mandiri.
+- **Mobile Bottom Navigation Bar** layaknya aplikasi *native* pada perangkat smartphone / tablet.
+- Dialog konfirmasi & pop-up modal kustom menggantikan `alert()` bawaan browser.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router, Server & Client Components)
+- **Library UI**: [React 19](https://react.dev/)
+- **Bahasa**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Database & ORM**: SQLite & [Prisma ORM](https://www.prisma.io/)
+- **Visualisasi Data**: [Recharts](https://recharts.org/)
+- **Ikon**: [Lucide React](https://lucide.dev/)
+
+---
+
+## 🚀 Memulai Instalasi Lokal
+
+### 1. Clone Repositori
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/krisnadippa/portoina1.git
+cd portoina1
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Instal Dependensi
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Konfigurasi Environment Variable
+Salin berkas `.env.example` menjadi `.env`:
+```bash
+cp .env.example .env
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Migrasi & Seeding Database
+Inisialisasi skema Prisma dan data awal contoh (*dummy data* karyawan & transaksi):
+```bash
+npx prisma db push
+npm run seed
+```
 
-## Learn More
+### 5. Jalankan Development Server
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Buka peramban Anda di [http://localhost:3000](http://localhost:3000).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📋 Skrip yang Tersedia
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Skrip | Deskripsi |
+|---|---|
+| `npm run dev` | Menjalankan Next.js development server |
+| `npm run build` | Menjalankan kompilasi produksi |
+| `npm run start` | Menjalankan aplikasi hasil kompilasi produksi |
+| `npm run lint` | Menjalankan pemeriksaan ESLint |
+| `npm run seed` | Menjalankan *seeder* data awal Prisma |
